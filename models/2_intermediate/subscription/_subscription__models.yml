@@ -1,0 +1,14 @@
+version: 2
+
+models:
+    - name: int_subscription__customers
+      description: Subscription Customers, a record for each customer with order summary information.
+      columns:
+          - name: customer_id
+            description: Unique identifier of a customer (primary key, integer).
+
+    - name: int_subscription__orders
+      description: Subscription Orders, a record for each customer subscription order.
+      columns:
+          - name: customer_id
+            description: Unique identifier of a customer (foreign key, integer).
