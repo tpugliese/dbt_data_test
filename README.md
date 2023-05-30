@@ -120,7 +120,7 @@ Schema: subscription
     - avg_days_between_deliveries (float): Average number of days between each customer's scheduled deliveries.
     - Add latest_scheduled_delivery_date and avg_days_between_deliveries to dim_subscription__customer.
 
-7. Create an intermediate model: int_subscription__customers_statuses based on customer subscription orders, activations, and cancellations.
+7. Create an intermediate model: int_subscription__customers_statuses based on customer subscription orders, activations, and cancellations. Include the following fields:
     - customer_id (integer)
     - customer_full_name (text)
     - customer_subscription_status (text): Customers who order can activate and cancel multiple times. Get the latest/current value for each customer. Values should be:
@@ -138,4 +138,6 @@ Schema: subscription
     - avg_wait_time (float): Average time in days between scheduled_ship_date and scheduled_deliver_date for all orders to that zip_code.
     - wait_time_rank (integer): Rank the each zip_code based its average_wait_time in descending order.
 
-9. Bonus points for setting up and passing [dbt project evaluator](https://docs.getdbt.com/blog/align-with-dbt-project-evaluator).
+9. Commit your changes, create a PR, and merge your changes to main. Then share the URL with the contributors (above).
+
+10. Reply to the job recruiter via Jobvite and send them URL to your GitHub repository.
