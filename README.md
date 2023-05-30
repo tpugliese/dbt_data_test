@@ -135,7 +135,7 @@ Schema: subscription
     - customer_zip_5_code (text): from #3 above
     - delivery_count (integer): Number of deliveries to that zip_code.
     - is_at_least_3 (boolean): Indicator for zip_codes with at least 3 deliveries.
-    - avg_wait_time (float): Average time in days between scheduled_ship_date and scheduled_deliver_date for all orders to that zip_code.
+    - avg_wait_time (float): Average time in days between scheduled_ship_date and scheduled_delivery_date for all orders to that zip_code.
     - wait_time_rank (integer): Rank the each zip_code based its average_wait_time in descending order.
 
 9. Commit your changes, create a PR, and merge your changes to main. Then share the URL with the contributors (above).
