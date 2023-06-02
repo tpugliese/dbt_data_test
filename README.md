@@ -111,7 +111,6 @@ Schema: subscription
     - customer_count (integer): Distinct count of customers in the cohort
     - order_count (integer): Number of orders across all time for all customers in the cohort
     - total_order_value (float): Total order value across all time for all customers in the cohort
-    - Add order_count and total_order_value to dim_subscription__customer.
 
 6. Create an intermediate model: int_subscription__customer_deliveries. Include the following fields:
     - customer_id (integer)
