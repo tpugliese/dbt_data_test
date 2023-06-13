@@ -6,9 +6,41 @@ models:
       columns:
           - name: customer_id
             description: Unique identifier of a customer (primary key, integer).
+            tests:
+              - unique
+              - not_null
 
     - name: int_subscription__orders
       description: Subscription Orders, a record for each customer subscription order.
       columns:
+          - name: subscription_order_id
+            description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
+            tests:
+              - unique
+              - not null      
           - name: customer_id
             description: Unique identifier of a customer (foreign key, integer).
+            tests:
+              - relationships:
+                  to: ref('stg_subscription__customers')
+                  field: customer_id
+    - name: int_subscription__customer_cohort
+      description: Placeholder CHANGE ME
+      columns:
+        - name: customer_id
+          description: Placeholder CHANGE ME
+    - name: int_subscription__customer_deliveries
+      description: Placeholder CHANGE ME
+      columns:
+        - name: customer_id
+          description: Placeholder CHANGE ME
+    - name: int_subscription__customer_statuses
+      description: Placeholder CHANGE ME
+      columns:
+        - name: customer_id
+          description: Placeholder CHANGE ME
+    - name: int_subscription__zip_code_summary
+      description: Placeholder CHANGE ME
+      columns:
+        - name: customer_id
+          description: Placeholder CHANGE ME

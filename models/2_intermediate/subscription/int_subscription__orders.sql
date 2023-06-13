@@ -1,12 +1,19 @@
+with
+
+orders as (
+    select * from {{ ref('stg_subscription__orders')}}
+)
+
 select
-    ord.customer_id,
-    ord.order_placed_at,
-    ord.scheduled_delivery_date,
-    ord.scheduled_ship_date,
-    ord.order_value,
-    ord.order_servings,
-    ord.order_recipes,
-    ord.cost_per_serving,
-    ord.cost_per_recipe,
-    ord.customer_order_sequence
-from {{ ref('stg_subscription__orders') }} as ord
+    orders.subscription_order_id,
+    orders.customer_id,
+    orders.order_placed_at,
+    orders.scheduled_delivery_date,
+    orders.scheduled_ship_date,
+    orders.order_value,
+    orders.order_servings,
+    orders.order_recipes,
+    orders.cost_per_serving,
+    orders.cost_per_recipe,
+    orders.customer_order_sequence
+from orders

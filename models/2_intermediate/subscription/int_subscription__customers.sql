@@ -1,4 +1,10 @@
-with orders as (
+with 
+
+subscription_customers as (
+    select * from {{ ref('stg_subscription__customers') }}
+),
+
+orders as (
     select
         customer_id,
         cast(min(order_placed_at) as date) as first_order_date,
@@ -8,12 +14,15 @@ with orders as (
 )
 
 select
-    c.customer_id,
-    c.customer_full_name,
-    c.customer_zip_code,
-    ord.first_order_date,
-    ord.latest_order_date
+    subscription_customers.customer_id,
+    subscription_customers.customer_full_name,
+    subscription_customers.customer_first_name,
+    subscription_customers.customer_last_name
+    subscription_customers.customer_zip_code,
+    subscription_customers.customer_zip_5_code,
+    orders.first_order_date,
+    orders.latest_order_date
 
-from {{ ref('stg_subscription__customers') }} as c
-left outer join orders as ord
-    on c.customer_id = ord.customer_id
+from subscription_customers
+left outer join orders
+    on subscription_customers.customer_id = orders.customer_id
