@@ -9,6 +9,16 @@ models:
             tests:
               - unique
               - not_null
+          - name: order_count
+            description: Count() of subscription_order_id for each customer (int).
+          - name: total_order_value
+            description: Sum() of order_value for each customer (float).
+          - name: customer_cohort
+            description: Formated minimum order_date (YYYY-MM) as varchar (text).
+          - name: first_order_date
+            description: Min() of grouped order_date for each customer (date).
+          - name: latest_order_date
+            description: Max() of grouped order_date for each customer (date).
 
     - name: int_subscription__orders
       description: Subscription Orders, a record for each customer subscription order.
@@ -17,7 +27,7 @@ models:
             description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
             tests:
               - unique
-              - not null      
+              - not_null      
           - name: customer_id
             description: Unique identifier of a customer (foreign key, integer).
             tests:
@@ -25,10 +35,7 @@ models:
                   to: ref('stg_subscription__customers')
                   field: customer_id
     - name: int_subscription__customer_cohort
-      description: Placeholder CHANGE ME
-      columns:
-        - name: customer_id
-          description: Placeholder CHANGE ME
+      description: Customers grouped by customer_cohort, can be null (text).
     - name: int_subscription__customer_deliveries
       description: Placeholder CHANGE ME
       columns:
