@@ -1,8 +1,55 @@
 version: 2
 
 models:
-    - name: dim_subscription__customers
-      description: Subscription Customers, a record for each customer with order summary information.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (primary key, integer).
+  - name: dim_subscription__customers
+    description: Subscription Customers, a record for each customer with order summary information.
+    columns:
+      - name: customer_id
+        description: Unique identifier of a customer (primary key, integer).
+        tests:
+          - unique
+          - not_null
+      - name: order_count
+        description: Count() of subscription_order_id for each customer (int).
+      - name: total_order_value
+        description: Sum() of order_value for each customer (float).
+      - name: customer_cohort
+        description: Formated minimum order_date (YYYY-MM) as varchar (text).
+      - name: first_order_date
+        description: Min() of grouped order_date for each customer (date).
+      - name: latest_order_date
+        description: Max() of grouped order_date for each customer (date).
+      - name: latest_scheduled_delivery_date
+        description: Max() of customer's orders' delivery_dates (date).
+      - name: avg_days_between_deliveries
+        description: Avg() of stg_subscription__days_between_delivery grouped by customer (float).
+
+  - name: fct_subscription__orders
+    description: Subscription Orders, a record for each customer subscription order.
+    columns:
+      - name: subscription_order_id
+        description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('int_subscription__customers')
+              field: customer_id
+
+  - name: mart_subscription__customers_and_orders
+    description: Subscription Orders, a record for each customer subscription order with customer information.
+    columns:
+      - name: subscription_order_id
+        description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('dim_subscription__customers')
+              field: customer_id

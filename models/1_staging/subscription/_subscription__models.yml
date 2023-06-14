@@ -1,50 +1,88 @@
 version: 2
 
 models:
-    - name: stg_subscription__customers
-      description: Subscription Customers, a record for each customer.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (primary key, integer).
-          - name: customer_full_name
-            description: The first and last name of a customer (text).
-          - name: customer_zip_code
-            description: The zip code or zip code+4 for a customer (text).
+  - name: stg_subscription__customers
+    description: Subscription Customers, a record for each customer.
+    columns:
+      - name: customer_id
+        description: Unique identifier of a customer (primary key, integer).
+        tests:
+          - unique
+          - not_null
+      - name: customer_full_name
+        description: The first and last name of a customer (text).
+      - name: customer_first_name
+        description: Use macro to transform the customer_full_name (text).
+      - name: customer_last_name
+        description: Use macro to transform the customer_full_name (text).        
+      - name: customer_zip_code
+        description: The zip code or zip code+4 for a customer (text).
+      - name: customer_zip_5_code
+        description: The 5 digit zip code for a customer (text).
 
-    - name: stg_subscription__activations
-      description: Subscription Activations, a record for each time a customer activates their subscription.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (foreign key, integer).
-          - name: activation_time
-            description: When the customer activated or reactivated their subscription (timestamp).
-          - name: is_first_activation
-            description: Is this the customer's first activation or a reactivation? (boolean).
+  - name: stg_subscription__activations
+    description: Subscription Activations, a record for each time a customer activates their subscription.
+    columns:
+      - name: subscription_activation_id
+        description: Surrogate key of table (customer_id, activation_time) (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('stg_subscription__customers')
+              field: customer_id
+      - name: activation_time
+        description: When the customer activated or reactivated their subscription (timestamp).
+      - name: is_first_activation
+        description: Is this the customer's first activation or a reactivation? (boolean).
 
-    - name: stg_subscription__cancellations
-      description: Subscription Cancellations, a record for each time a customer cancels their subscription.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (foreign key, integer).
-          - name: cancellation_time
-            description: When the customer canceled their subscription (timestamp).
-          - name: cancellation_reason
-            description: Customer provided reason for canceling (text).
+  - name: stg_subscription__cancellations
+    description: Subscription Cancellations, a record for each time a customer cancels their subscription.
+    columns:
+      - name: subscription_cancellation_id
+        description: Surrogate key of table (customer_id, cancellation_time) (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('stg_subscription__customers')
+              field: customer_id
+      - name: cancellation_time
+        description: When the customer canceled their subscription (timestamp).
+      - name: cancellation_reason
+        description: Customer provided reason for canceling (text).
 
-    - name: stg_subscription__orders
-      description: Subscription Orders, a record for each customer subscription order.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (foreign key, integer).
-          - name: order_placed_at
-            description: When the order was billed to the customer (timestamp).
-          - name: scheduled_delivery_date
-            description: When the order is scheduled to be delivered (date).
-          - name: scheduled_ship_date
-            description: When the order is scheduled to ship (date).
-          - name: order_value
-            description: Cost of the order before discounts and refunds (float).
-          - name: order_servings
-            description: Number of servings in the order (integer).
-          - name: order_recipes
-            description: Number of recipes in the order (integer).
+  - name: stg_subscription__orders
+    description: Subscription Orders, a record for each customer subscription order.
+    columns:
+      - name: subscription_order_id
+        description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
+        tests:
+          - unique
+          - not_null      
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('stg_subscription__customers')
+              field: customer_id
+      - name: order_placed_at
+        description: When the order was billed to the customer (timestamp).
+      - name: scheduled_delivery_date
+        description: When the order is scheduled to be delivered (date).
+      - name: scheduled_ship_date
+        description: When the order is scheduled to ship (date).
+      - name: order_value
+        description: Cost of the order before discounts and refunds (float).
+      - name: order_servings
+        description: Number of servings in the order (integer).
+      - name: order_recipes
+        description: Number of recipes in the order (integer).
+      - name: days_between_delivery
+        description: Number of days between scheduled_ship_date and scheduled_delivery_date (float).
