@@ -1,53 +1,94 @@
 version: 2
 
 models:
-    - name: int_subscription__customers
-      description: Subscription Customers, a record for each customer with order summary information.
-      columns:
-          - name: customer_id
-            description: Unique identifier of a customer (primary key, integer).
-            tests:
-              - unique
-              - not_null
-          - name: order_count
-            description: Count() of subscription_order_id for each customer (int).
-          - name: total_order_value
-            description: Sum() of order_value for each customer (float).
-          - name: customer_cohort
-            description: Formated minimum order_date (YYYY-MM) as varchar (text).
-          - name: first_order_date
-            description: Min() of grouped order_date for each customer (date).
-          - name: latest_order_date
-            description: Max() of grouped order_date for each customer (date).
+  - name: int_subscription__customers
+    description: Subscription Customers, a record for each customer with order summary information.
+    columns:
+      - name: customer_id
+        description: Unique identifier of a customer (primary key, integer).
+        tests:
+          - unique
+          - not_null
+      - name: order_count
+        description: Count() of subscription_order_id for each customer (int).
+      - name: total_order_value
+        description: Sum() of order_value for each customer (float).
+      - name: customer_cohort
+        description: Formated minimum order_date (YYYY-MM) as varchar (text).
+      - name: first_order_date
+        description: Min() of grouped order_date for each customer (date).
+      - name: latest_order_date
+        description: Max() of grouped order_date for each customer (date).
 
-    - name: int_subscription__orders
-      description: Subscription Orders, a record for each customer subscription order.
-      columns:
-          - name: subscription_order_id
-            description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
-            tests:
-              - unique
-              - not_null      
-          - name: customer_id
-            description: Unique identifier of a customer (foreign key, integer).
-            tests:
-              - relationships:
-                  to: ref('stg_subscription__customers')
-                  field: customer_id
-    - name: int_subscription__customer_cohort
-      description: Customers grouped by customer_cohort, can be null (text).
-    - name: int_subscription__customer_deliveries
-      description: Placeholder CHANGE ME
-      columns:
-        - name: customer_id
-          description: Placeholder CHANGE ME
-    - name: int_subscription__customer_statuses
-      description: Placeholder CHANGE ME
-      columns:
-        - name: customer_id
-          description: Placeholder CHANGE ME
-    - name: int_subscription__zip_code_summary
-      description: Placeholder CHANGE ME
-      columns:
-        - name: customer_id
-          description: Placeholder CHANGE ME
+  - name: int_subscription__orders
+    description: Subscription Orders, a record for each customer subscription order.
+    columns:
+      - name: subscription_order_id
+        description: Surrogate key of table (customer_id, order_placed_at) (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - relationships:
+              to: ref('stg_subscription__customers')
+              field: customer_id
+
+  - name: int_subscription__customer_cohorts
+    description: Customers grouped by customer_cohort, can be null.
+    columns:
+      - name: customer_cohort
+        description: Formated minimum order_date (YYYY-MM) as varchar (text).
+      - name: order_count
+        description: Count() of subscription_order_id for each customer (int).
+      - name: total_order_value
+        description: Sum() of order_value for each customer (float).
+
+  - name: int_subscription__customer_deliveries
+    description: Customer deliveries by customer_id.
+    columns:
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              field: customer_id
+              to: ref('int_subscription__customers')
+      - name: latest_scheduled_delivery_date
+        description: Max() of customer's orders' delivery_dates (date).
+      - name: avg_days_between_deliveries
+        description: Avg() of stg_subscription__days_between_delivery grouped by customer (float).
+
+  - name: int_subscription__customer_statuses
+    description: The Subscription Status of a customer as defined by Subscription Activation and Cancellation.
+    columns:
+      - name: customer_id
+        description: Unique identifier of a customer (foreign key, integer).
+        tests:
+          - unique
+          - not_null
+      - name: customer_subscription_status
+        description: Customers who order can activate and cancel multiple times. Get the latest/current value for each customer (text).
+      - name: is_subscribed
+        description: Subscribed status only; all other statuses are not subscribed (boolean).
+        
+  - name: int_subscription__zip_code_summary
+    description: Subscription Deliveries, a record for each zip code with delivery data.
+    columns:
+      - name: customer_zip_5_code
+        description: The 5 digit zip code for a customer (primary key, text).
+        tests:
+          - unique
+          - not_null
+      - name: customer_count
+        description: Number of distinct customers per zip_code (float).
+      - name: delivery_count
+        description: Number of deliveries to that zip_code (float).
+      - name: is_at_least_3
+        description: Indicator for zip_codes with at least 3 deliveries (boolean).
+      - name: avg_wait_time
+        description: Avg days between scheduled_ship_date and scheduled_delivery_date for all orders to that zip_code (float).
+      - name: wait_time_rank
+        description: DESC order rank for each zip code based on avg_wait_time, excluding nulls (int).

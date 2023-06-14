@@ -15,5 +15,6 @@ select
     orders.order_recipes,
     orders.cost_per_serving,
     orders.cost_per_recipe,
+    orders.days_between_delivery,
     orders.customer_order_sequence
 from orders

@@ -1,29 +1,15 @@
 with
     subscription__customers as (select * from {{ ref("int_subscription__customers") }}),
 
-    deliveries as (
-        select
-            subscription_order_id,
-            customer_id,
-            order_placed_at,
-            scheduled_delivery_date,
-            scheduled_ship_date,
-            order_value,
-            order_servings,
-            order_recipes,
-            cost_per_serving,
-            cost_per_recipe,
-            days_between_delivery,
-            customer_order_sequence
-        from {{ ref("stg_subscription__orders") }}
-    )
+    deliveries as (select * from {{ ref("int_subscription__orders") }})
 
 select
     subscription__customers.customer_id,
-    count(deliveries.subscription_order_id),
-    avg(days_between_delivery)
+    subscription__customers.customer_full_name,
+    max(deliveries.scheduled_delivery_date) as latest_scheduled_delivery_date,
+    avg(deliveries.days_between_delivery) as avg_days_between_deliveries
 
 from subscription__customers
 left outer join
     deliveries on subscription__customers.customer_id = deliveries.customer_id
-group by subscription__customers.customer_id
+group by subscription__customers.customer_id, subscription__customers.customer_full_name
